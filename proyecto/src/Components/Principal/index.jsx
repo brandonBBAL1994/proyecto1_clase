@@ -7,21 +7,24 @@ const Principal = () => {
     const searchParams = new URLSearchParams(search)
 
     const turno = parseInt(searchParams.get('turno'))
-    const estado= searchParams.get('estado')
-    
+    const estado = searchParams.get('estado')
+
     const casillaEnBlanco = 2
     const fichaBlanca = 1
     const fichaNegra = 0
 
     const colocar = () => {
+        
+        const matrizPonderada = arrayPonderacion()
+        
         let pos = 0
         let x = 0
         let y = 0
 
         let arrayTablero = new Array(8)
-        for(x = 0; x <= 7; x++){
+        for (x = 0; x <= 7; x++) {
             arrayTablero[x] = new Array(8)
-            for(y = 0; y<=7; y++){
+            for (y = 0; y <= 7; y++) {
                 arrayTablero[x][y] = parseInt(estado[pos])
                 pos++
             }
@@ -34,147 +37,148 @@ const Principal = () => {
         let w = 0
         let arregloPosiblesMovimientos = []
 
-        for(x = 0; x <= 7; x++){
-            for(y = 0; y <= 7; y++){
-                if(arrayTablero[x][y] !== casillaEnBlanco) continue
+        for (x = 0; x <= 7; x++) {
+            for (y = 0; y <= 7; y++) {
+                if (arrayTablero[x][y] !== casillaEnBlanco) continue
                 let posibleIndice = {
                     x: x,
                     y: y,
-                    total: 0
+                    total: 0,
+                    pond: matrizPonderada[x][y]
                 }
                 let counterMovs = 0
 
-                if(turno === 0){//turno de fichas negras
+                if (turno === 0) {//turno de fichas negras
 
-                    if(y > 0){//voy a revisar los valores de la izquierda
+                    if (y > 0) {//voy a revisar los valores de la izquierda
                         z = y - 1
                         counterMovs = 0
-                        
-                        while(z >= 0){
-                            if(arrayTablero[x][z] === casillaEnBlanco || arrayTablero[x][z] === fichaNegra) break
-                            if(arrayTablero[x][z] === fichaBlanca) counterMovs++
+
+                        while (z > 0) {
+                            if (arrayTablero[x][z] === casillaEnBlanco || arrayTablero[x][z] === fichaNegra) break
+                            if (arrayTablero[x][z] === fichaBlanca) counterMovs++
                             z--
-                            if(arrayTablero[x][z] === fichaNegra) break
+                            if (arrayTablero[x][z] === fichaNegra) break
                         }
-                        if(arrayTablero[x][z] === fichaNegra && counterMovs > 0){
+                        if (arrayTablero[x][z] === fichaNegra && counterMovs > 0) {
                             posibleIndice.total += counterMovs
                             //console.log(posibleIndice)
                         }
                     }
-                    if(y <= 5){//voy a revisar los valores a la derecha
+                    if (y <= 5) {//voy a revisar los valores a la derecha
                         z = y + 1
                         counterMovs = 0
-                        while(z <= 7){
-                            if(arrayTablero[x][z] === casillaEnBlanco || arrayTablero[x][z] === fichaNegra) break
-                            if(arrayTablero[x][z] === fichaBlanca) counterMovs++
+                        while (z < 7) {
+                            if (arrayTablero[x][z] === casillaEnBlanco || arrayTablero[x][z] === fichaNegra) break
+                            if (arrayTablero[x][z] === fichaBlanca) counterMovs++
                             z++
-                            if(arrayTablero[x][z] === fichaNegra) break
+                            if (arrayTablero[x][z] === fichaNegra) break
                         }
-                        if(arrayTablero[x][z] === fichaNegra && counterMovs > 0){
+                        if (arrayTablero[x][z] === fichaNegra && counterMovs > 0) {
                             posibleIndice.total += counterMovs
                             //console.log(posibleIndice)
-                            
+
                         }
                     }
-                    if(x >= 2){//voy a revisar hacia arriba
+                    if (x >= 2) {//voy a revisar hacia arriba
                         z = x - 1
                         counterMovs = 0
-                        while(z >= 0){
-                            if(arrayTablero[z][y] === casillaEnBlanco || arrayTablero[x][z] === fichaNegra) break
-                            if(arrayTablero[z][y] === fichaBlanca) counterMovs++
+                        while (z > 0) {
+                            if (arrayTablero[z][y] === casillaEnBlanco || arrayTablero[z][y] === fichaNegra) break
+                            if (arrayTablero[z][y] === fichaBlanca) counterMovs++
                             z--
-                            if(arrayTablero[z][y] === fichaNegra) break
+                            if (arrayTablero[z][y] === fichaNegra) break
                         }
-                        if(arrayTablero[z][y] === fichaNegra && counterMovs > 0){
+                        if (arrayTablero[z][y] === fichaNegra && counterMovs > 0) {
                             posibleIndice.total += counterMovs
                             //console.log(posibleIndice)
                         }
                     }
-                    if(x <= 5){//voy a revisar hacia abajo
+                    if (x <= 5) {//voy a revisar hacia abajo
                         z = x + 1
                         counterMovs = 0
-                        while(z <= 7){
-                            if(arrayTablero[z][y] === casillaEnBlanco || arrayTablero[z][y] === fichaNegra) break
-                            if(arrayTablero[z][y] === fichaBlanca) counterMovs++
+                        while (z < 7) {
+                            if (arrayTablero[z][y] === casillaEnBlanco || arrayTablero[z][y] === fichaNegra) break
+                            if (arrayTablero[z][y] === fichaBlanca) counterMovs++
                             z++
-                            if(arrayTablero[z][y] === fichaNegra) break
+                            if (arrayTablero[z][y] === fichaNegra) break
                         }
-                        if(arrayTablero[z][y] === fichaNegra && counterMovs > 0){
+                        if (arrayTablero[z][y] === fichaNegra && counterMovs > 0) {
                             posibleIndice.total += counterMovs
                             //console.log(posibleIndice)
-                            
+
                         }
                     }
 
                     /* REVISANDO EN DIAGONALES */
 
                     //DIAGONAL DERECHA ARRIBA
-                    if(x >= 2 && y <= 5){
+                    if (x >= 2 && y <= 5) {
                         z = x - 1
                         w = y + 1
                         counterMovs = 0
-                        while(z > 0 && w < 7){
-                            if(arrayTablero[z][w] === casillaEnBlanco || arrayTablero[z][w] === fichaNegra) break
-                            if(arrayTablero[z][w] === fichaBlanca) counterMovs++
+                        while (z > 0 && w < 7) {
+                            if (arrayTablero[z][w] === casillaEnBlanco || arrayTablero[z][w] === fichaNegra) break
+                            if (arrayTablero[z][w] === fichaBlanca) counterMovs++
                             z--
                             w++
-                            if(arrayTablero[z][w] === fichaNegra) break
+                            if (arrayTablero[z][w] === fichaNegra) break
                         }
-                        if(arrayTablero[z][w] === fichaNegra && counterMovs > 0){
+                        if (arrayTablero[z][w] === fichaNegra && counterMovs > 0) {
                             posibleIndice.total += counterMovs
                             //console.log(posibleIndice)
                         }
                     }
 
                     //DIAGONAL DERECHA ABAJO
-                    if(x <= 5 && y <= 5){
+                    if (x <= 5 && y <= 5) {
                         z = x + 1
                         w = y + 1
                         counterMovs = 0
-                        while(z < 7 && w < 7){
-                            if(arrayTablero[z][w] === casillaEnBlanco || arrayTablero[z][w] === fichaNegra) break
-                            if(arrayTablero[z][w] === fichaBlanca) counterMovs++
+                        while (z < 7 && w < 7) {
+                            if (arrayTablero[z][w] === casillaEnBlanco || arrayTablero[z][w] === fichaNegra) break
+                            if (arrayTablero[z][w] === fichaBlanca) counterMovs++
                             z++
                             w++
-                            if(arrayTablero[z][w] === fichaNegra) break
+                            if (arrayTablero[z][w] === fichaNegra) break
                         }
-                        if(arrayTablero[z][w] === fichaNegra && counterMovs > 0){
+                        if (arrayTablero[z][w] === fichaNegra && counterMovs > 0) {
                             posibleIndice.total += counterMovs
                             //console.log(posibleIndice)
                         }
                     }
 
                     //DIAGONAL IZQUIERDA ARRIBA
-                    if(x >= 2 && y >= 2){
+                    if (x >= 2 && y >= 2) {
                         z = x - 1
                         w = y - 1
                         counterMovs = 0
-                        while(z > 0 && w > 0){
-                            if(arrayTablero[z][w] === casillaEnBlanco || arrayTablero[z][w] === fichaNegra) break
-                            if(arrayTablero[z][w] === fichaBlanca) counterMovs++
+                        while (z > 0 && w > 0) {
+                            if (arrayTablero[z][w] === casillaEnBlanco || arrayTablero[z][w] === fichaNegra) break
+                            if (arrayTablero[z][w] === fichaBlanca) counterMovs++
                             z--
                             w--
-                            if(arrayTablero[z][w] === fichaNegra) break
+                            if (arrayTablero[z][w] === fichaNegra) break
                         }
-                        if(arrayTablero[z][w] === fichaNegra && counterMovs > 0){
+                        if (arrayTablero[z][w] === fichaNegra && counterMovs > 0) {
                             posibleIndice.total += counterMovs
                             //console.log(posibleIndice)
                         }
                     }
 
                     //DIAGONAL IZQUIERDA ABAJO
-                    if(x <= 5 && y >= 2){
+                    if (x <= 5 && y >= 2) {
                         z = x + 1
                         w = y - 1
                         counterMovs = 0
-                        while(z < 7 && w > 0){
-                            if(arrayTablero[z][w] === casillaEnBlanco || arrayTablero[z][w] === fichaNegra) break
-                            if(arrayTablero[z][w] === fichaBlanca) counterMovs++
+                        while (z < 7 && w > 0) {
+                            if (arrayTablero[z][w] === casillaEnBlanco || arrayTablero[z][w] === fichaNegra) break
+                            if (arrayTablero[z][w] === fichaBlanca) counterMovs++
                             z++
                             w--
-                            if(arrayTablero[z][w] === fichaNegra) break
+                            if (arrayTablero[z][w] === fichaNegra) break
                         }
-                        if(arrayTablero[z][w] === fichaNegra && counterMovs > 0){
+                        if (arrayTablero[z][w] === fichaNegra && counterMovs > 0) {
                             posibleIndice.total += counterMovs
                             //console.log(posibleIndice)
                         }
@@ -182,14 +186,14 @@ const Principal = () => {
 
 
 
-                    
-                }else{//turno fichas blancas
+
+                } else {//turno fichas blancas
 
                     if (y > 0) {//voy a revisar los valores de la izquierda
                         z = y - 1
                         counterMovs = 0
 
-                        while (z >= 0) {
+                        while (z > 0) {
                             if (arrayTablero[x][z] === casillaEnBlanco || arrayTablero[x][z] === fichaBlanca) break
                             if (arrayTablero[x][z] === fichaNegra) counterMovs++
                             z--
@@ -204,7 +208,7 @@ const Principal = () => {
                     if (y <= 5) {//voy a revisar los valores a la derecha
                         z = y + 1
                         counterMovs = 0
-                        while (z <= 7) {
+                        while (z < 7) {
                             if (arrayTablero[x][z] === casillaEnBlanco || arrayTablero[x][z] === fichaBlanca) break
                             if (arrayTablero[x][z] === fichaNegra) counterMovs++
                             z++
@@ -218,7 +222,7 @@ const Principal = () => {
                     if (x >= 2) {//voy a revisar hacia arriba
                         z = x - 1
                         counterMovs = 0
-                        while (z >= 0) {
+                        while (z > 0) {
                             if (arrayTablero[z][y] === casillaEnBlanco || arrayTablero[z][y] === fichaBlanca) break
                             if (arrayTablero[z][y] === fichaNegra) counterMovs++
                             z--
@@ -232,7 +236,7 @@ const Principal = () => {
                     if (x <= 5) {//voy a revisar hacia abajo
                         z = x + 1
                         counterMovs = 0
-                        while (z <= 7) {
+                        while (z < 7) {
                             if (arrayTablero[z][y] === casillaEnBlanco || arrayTablero[z][y] === fichaBlanca) break
                             if (arrayTablero[z][y] === fichaNegra) counterMovs++
                             z++
@@ -316,22 +320,54 @@ const Principal = () => {
                         }
                     }
                 }
-                if(posibleIndice.total > 0){
+                if (posibleIndice.total > 0) {
                     arregloPosiblesMovimientos.push(posibleIndice)
                 }
             }
-            
         }
 
-        arregloPosiblesMovimientos.sort(function(a, b){
-            return b.total - a.total
+        arregloPosiblesMovimientos.sort(function(a,b) {
+            return b.pond - a.pond
         })
 
         return (arregloPosiblesMovimientos[0].x+''+arregloPosiblesMovimientos[0].y)
 
     }
 
-    return ( <> { colocar() } </> )
+    const arrayPonderacion = () => {
+        let x = 0
+        let y = 0
+        let arrayPonderacion = new Array(8)
+        for (x = 0; x <= 7; x++) {
+            arrayPonderacion[x] = new Array(8)
+            for (y = 0; y <= 7; y++) {
+                if (x === 0 || x === 7) {
+                    if (y === 0 || y === 7) arrayPonderacion[x][y] = 120
+                    else if (y === 1 || y === 6) arrayPonderacion[x][y] = -20
+                    else if (y === 2 || y === 5) arrayPonderacion[x][y] = 20
+                    else arrayPonderacion[x][y] = 5
+                }
+                else if (x === 1 || x === 6) {
+                    if (y === 0 || y === 7) arrayPonderacion[x][y] = -20
+                    else if (y === 1 || y === 6) arrayPonderacion[x][y] = -40
+                    else arrayPonderacion[x][y] = -5
+                }
+                else if (x === 2 || x === 5) {
+                    if (y === 0 || y === 7) arrayPonderacion[x][y] = 20
+                    else if (y === 1 || y === 6) arrayPonderacion[x][y] = -5
+                    else if (y === 2 || y === 5) arrayPonderacion[x][y] = 15
+                    else arrayPonderacion[x][y] = 3
+                } else {
+                    if (y === 0 || y === 7) arrayPonderacion[x][y] = 5
+                    else if (y === 1 || y === 6) arrayPonderacion[x][y] = -5
+                    else arrayPonderacion[x][y] = 3
+                }
+            }
+        }
+        return arrayPonderacion
+    }
+
+    return (<> { colocar()} </>)
 }
 
 export default Principal
